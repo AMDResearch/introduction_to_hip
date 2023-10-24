@@ -2,6 +2,16 @@
 #include <math.h>
 #include "hip/hip_runtime.h"
 
+/* Macro for checking GPU API return values */
+#define gpuCheck(call)                                                                          \
+do{                                                                                             \
+    hipError_t gpuErr = call;                                                                   \
+    if(hipSuccess != gpuErr){                                                                   \
+        printf("GPU API Error - %s:%d: '%s'\n", __FILE__, __LINE__, hipGetErrorString(gpuErr)); \
+        exit(1);                                                                                \
+    }                                                                                           \
+}while(0)
+
 /* Vector addition kernel */
 __global__ void vector_addition(double *A, double *B, double *C, int n)
 {
@@ -64,9 +74,6 @@ int main(int argc, char *argv[]){
     if( fabs( (sum / N) - 1.0 ) > tolerance ){
         printf("Error: Sum/N = %0.2f instead of ~1.0\n", sum / N);
     }
-    else{
-        printf("__SUCCESS__\n");
-    }
 
     /* Free CPU memory */
     free(h_A);
@@ -77,6 +84,14 @@ int main(int argc, char *argv[]){
     hipFree(d_A);
     hipFree(d_B);
     hipFree(d_C);
+
+    printf("\n==============================\n");
+    printf("__SUCCESS__\n");
+    printf("------------------------------\n");
+    printf("N                : %d\n", N);
+    printf("Blocks in Grid   : %d\n", blk_in_grid);
+    printf("Threads per Block: %d\n", thr_per_blk);
+    printf("==============================\n\n");
 
     return 0;
 }
