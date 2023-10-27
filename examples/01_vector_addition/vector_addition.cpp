@@ -2,14 +2,18 @@
 #include <math.h>
 #include "hip/hip_runtime.h"
 
-/* Vector addition kernel */
+/* --------------------------------------------------
+vector addition kernel
+-------------------------------------------------- */
 __global__ void vector_addition(double *A, double *B, double *C, int n)
 {
     int id = blockDim.x * blockIdx.x + threadIdx.x;
     if (id < n) C[id] = A[id] + B[id];
 }
 
-/* Main program */
+/* --------------------------------------------------
+Main program
+-------------------------------------------------- */
 int main(int argc, char *argv[]){
 
     /* Size of array */
