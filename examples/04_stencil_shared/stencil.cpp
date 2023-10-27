@@ -26,8 +26,24 @@ Stencil kernel
 -------------------------------------------------- */
 __global__ void stencil(double *a_in, double* a_out){
 
-    /* Define the global (id) thread ID offet by STENCIL_SIZE */
-    int id = blockDim.x * blockIdx.x + threadIdx.x + STENCIL_RADIUS;
+    /* Allocate shared memory */
+    __shared__ double s_a_in[THREADS_PER_BLOCK + 2 * STENCIL_RADIUS];
+
+    /* Define the global (id) and block-local (local_id) thread IDs offet by STENCIL_SIZE */
+    int id       = blockDim.x * blockIdx.x + threadIdx.x + STENCIL_RADIUS;
+    int local_id = threadIdx.x + STENCIL_RADIUS;
+
+    /* Copy data from HBM buffer into shared-memory buffer: main array only, no ghost zones */
+    s_a_in[local_id] = a_in[id];
+
+    /* Copy data from HBM buffer into shared-memory buffer: leading/trailing ghost zones */
+    if (threadIdx.x < STENCIL_RADIUS){
+        s_a_in[local_id - STENCIL_RADIUS] = a_in[id - STENCIL_RADIUS];
+        s_a_in[local_id + THREADS_PER_BLOCK] = a_in[id + THREADS_PER_BLOCK];
+    }
+
+    /* Ensure all threads in a block have finished copying their data into shared memory */
+     __syncthreads();
 
     /* Perform average stencil operation for main elements of the array - not on ghost zones*/
     if (id < (N + STENCIL_RADIUS)){
@@ -35,7 +51,7 @@ __global__ void stencil(double *a_in, double* a_out){
         double sum = 0.0;
 
         for(int i=-STENCIL_RADIUS; i<=STENCIL_RADIUS; i++){
-            sum += a_in[id + i];
+            sum += s_a_in[local_id + i];
         }
 
         a_out[id] = sum / STENCIL_SIZE;
