@@ -26,10 +26,10 @@ Stencil kernel
 -------------------------------------------------- */
 __global__ void stencil(double *a_in, double* a_out){
 
-    /* Define the global (id) thread ID offet by STENCIL_SIZE */
+    /* Define the global thread ID offset by STENCIL_SIZE */
     int id = blockDim.x * blockIdx.x + threadIdx.x + STENCIL_RADIUS;
 
-    /* Perform average stencil operation for main elements of the array - not on ghost zones*/
+    /* Perform average stencil operation for main elements of the array - not on ghost zones */
     if (id < (N + STENCIL_RADIUS)){
 
         double sum = 0.0;
