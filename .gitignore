@@ -1,3 +1,4 @@
-.*o
+*.o
 vector_addition
 stencil
+matrix_addition
