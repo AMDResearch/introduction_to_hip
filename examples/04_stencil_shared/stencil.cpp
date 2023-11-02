@@ -47,7 +47,6 @@ __global__ void stencil(double *a_in, double* a_out){
 
     /* Perform average stencil operation for main elements of the array - not on ghost zones*/
     if (id < (N + STENCIL_RADIUS)){
-
         double sum = 0.0;
 
         for(int i=-STENCIL_RADIUS; i<=STENCIL_RADIUS; i++){
