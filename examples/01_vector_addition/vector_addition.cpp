@@ -67,6 +67,7 @@ int main(int argc, char *argv[]){
 
     if( fabs( (sum / N) - 1.0 ) > tolerance ){
         printf("Error: Sum/N = %0.2f instead of ~1.0\n", sum / N);
+        exit(1);
     }
 
     /* Free CPU memory */
