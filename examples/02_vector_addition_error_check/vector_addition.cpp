@@ -62,13 +62,13 @@ int main(int argc, char *argv[]){
     int blk_in_grid = ceil( float(N) / thr_per_blk );
 
     /* Launch vector addition kernel */
-    vector_addition<<<blk_in_grid, thr_per_blk, 0, 1>>>(d_A, d_B, d_C, N);
+    vector_addition<<<blk_in_grid, thr_per_blk>>>(d_A, d_B, d_C, N);
 
     /* Check for kernel launch errors */
     gpuCheck( hipGetLastError() );
 
     /* Check for kernel execution errors */
-    gpuCheck (hipDeviceSynchronize() );
+    gpuCheck ( hipDeviceSynchronize() );
 
     /* Copy data from device array to host array (only need result, d_C) */
     gpuCheck( hipMemcpy(h_C, d_C, bytes, hipMemcpyDeviceToHost) );
@@ -83,6 +83,7 @@ int main(int argc, char *argv[]){
 
     if( fabs( (sum / N) - 1.0 ) > tolerance ){
         printf("Error: Sum/N = %0.2f instead of ~1.0\n", sum / N);
+        exit(1);
     }
 
     /* Free CPU memory */
