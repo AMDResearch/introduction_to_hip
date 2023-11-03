@@ -63,19 +63,7 @@ int main(int argc, char *argv[]){
     gpuCheck ( hipDeviceSynchronize() );
 
     /* Copy data from device array to host array */
-
-    // /////////////////////////////////////////////////////////
-    // TODO: Add hipMemcpy call here using the following
-    //       definition.
-    //
-    //       hipError_t hipMemcpy( void*  destination_buffer,
-    //                             void*  source_buffer,
-    //                             size_t num_bytes_to_copy,
-    //                             hipMemcpyKind kind
-    //                           )
-    // 
-    //       If you get stuck, see the host-to-device call above
-    // /////////////////////////////////////////////////////////
+    gpuCheck( hipMemcpy(h_A, d_A, bytes, hipMemcpyDeviceToHost) );
 
     /* Check for correct results */
     for (int i=0; i<N; i++){
