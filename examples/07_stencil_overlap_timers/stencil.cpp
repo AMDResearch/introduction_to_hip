@@ -74,12 +74,25 @@ int main(int argc, char *argv[]){
     /* Number of bytes in array */
     size_t bytes = N * sizeof(double);
 
-    /* Allocate host buffers */
-    double *h_A_in      = (double*)malloc(bytes);
-    double *h_A_out     = (double*)malloc(bytes);
-    double *h_A_out_cpu = (double*)malloc(bytes);
+    // Create start/stop event objects and variable for elapsed time in ms
+    hipEvent_t start_kernel, stop_kernel;
+    gpuCheck( hipEventCreate(&start_kernel) );
+    gpuCheck( hipEventCreate(&stop_kernel) );
 
-    /* Initialize CPU arrays */
+    hipEvent_t start_h2d, stop_h2d;
+    gpuCheck( hipEventCreate(&start_h2d) );
+    gpuCheck( hipEventCreate(&stop_h2d) );
+
+    hipEvent_t start_d2h, stop_d2h;
+    gpuCheck( hipEventCreate(&start_d2h) );
+    gpuCheck( hipEventCreate(&stop_d2h) );
+
+    /* Allocate host buffers */
+    double *h_A_in, *h_A_out, *h_A_out_cpu;
+    gpuCheck( hipHostMalloc(&h_A_in, bytes) );
+    gpuCheck( hipHostMalloc(&h_A_out, bytes) );
+    gpuCheck( hipHostMalloc(&h_A_out_cpu, bytes) );
+
     for (int i=0; i<N; i++){
 
         h_A_in[i]      = (double)rand()/(double)RAND_MAX;
@@ -95,23 +108,59 @@ int main(int argc, char *argv[]){
     /* Number of thread blocks in grid */
     int blk_in_grid = ceil( float(N) / THREADS_PER_BLOCK );
 
+    /* Start timer */
+    struct timeval start_total_time, stop_total_time, elapsed_total_time;
+    struct timeval start_cpu_time, stop_cpu_time, elapsed_cpu_time;
+    gettimeofday(&start_total_time, 0);
+
+    gpuCheck( hipEventRecord(start_h2d, NULL) );
+
     /* Copy arrays from host to device */
-    gpuCheck( hipMemcpy(d_A_in, h_A_in, bytes, hipMemcpyHostToDevice) );
-    gpuCheck( hipMemcpy(d_A_out, h_A_out, bytes, hipMemcpyHostToDevice) );
+    gpuCheck( hipMemcpyAsync(d_A_in, h_A_in, bytes, hipMemcpyHostToDevice, NULL) );
+    gpuCheck( hipMemcpyAsync(d_A_out, h_A_out, bytes, hipMemcpyHostToDevice, NULL) );
+
+    gpuCheck( hipEventRecord(stop_h2d, NULL) );
+    gpuCheck( hipEventRecord(start_kernel, NULL) );
 
     /* Launch stencil kernel */
     stencil<<<blk_in_grid, THREADS_PER_BLOCK>>>(d_A_in, d_A_out);
 
+    gpuCheck( hipEventRecord(stop_kernel, NULL) );
+    gpuCheck( hipEventRecord(start_d2h, NULL) );
+
     /* Copy out-array from device to host */
-    gpuCheck( hipMemcpy(h_A_out, d_A_out, bytes, hipMemcpyDeviceToHost) );
+    gpuCheck( hipMemcpyAsync(h_A_out, d_A_out, bytes, hipMemcpyDeviceToHost, NULL) );
+
+    gpuCheck( hipEventRecord(stop_d2h, NULL) );
+    gettimeofday(&start_cpu_time, 0);
 
     /* Run CPU-version of stencil */
     cpu_stencil(h_A_in, h_A_out_cpu);
 
+    gettimeofday(&stop_cpu_time, 0);
+
+    gpuCheck( hipDeviceSynchronize() );
+
+    gettimeofday(&stop_total_time, 0);
+    timersub(&stop_total_time, &start_total_time, &elapsed_total_time);
+    timersub(&stop_cpu_time, &start_cpu_time, &elapsed_cpu_time);
+
+    float kernel_time;
+    gpuCheck( hipEventSynchronize(stop_kernel) );
+    gpuCheck( hipEventElapsedTime(&kernel_time, start_kernel, stop_kernel) );
+
+    float h2d_time;
+    gpuCheck( hipEventSynchronize(stop_h2d) );
+    gpuCheck( hipEventElapsedTime(&h2d_time, start_h2d, stop_h2d) );
+
+    float d2h_time;
+    gpuCheck( hipEventSynchronize(stop_d2h) );
+    gpuCheck( hipEventElapsedTime(&d2h_time, start_d2h, stop_d2h) );
+
     /* Check results */
     double tolerance   = 1.0e-14;
-    for (int i=0; i<N; i++){
 
+    for (int i=0; i<N; i++){
         if ( fabs(h_A_out[i] - h_A_out_cpu[i]) > tolerance){
             printf("Error: h_A_out[%d] - h_A_out_cpu[%d] = %0.14f - %0.14f = %0.14f > %0.14f\n", i, i, h_A_out[i], h_A_out_cpu[i], fabs(h_A_out[i] - h_A_out_cpu[i]), tolerance);
             exit(1);
@@ -119,15 +168,20 @@ int main(int argc, char *argv[]){
     }
 
     /* Free host memory */
-    free(h_A_in);
-    free(h_A_out);
-    free(h_A_out_cpu);
+    gpuCheck( hipHostFree(h_A_in) );
+    gpuCheck( hipHostFree(h_A_out) );
+    gpuCheck( hipHostFree(h_A_out_cpu) );
 
     /* Free device memory */
     gpuCheck( hipFree(d_A_in) );
     gpuCheck( hipFree(d_A_out) );
 
     printf("__SUCCESS__\n");
+    printf("Elapsed total time (ms): %0.2f\n", elapsed_total_time.tv_sec*1000.0+elapsed_total_time.tv_usec/1000.0);
+    printf("Elapsed CPU time (ms): %0.2f\n", elapsed_cpu_time.tv_sec*1000.0+elapsed_cpu_time.tv_usec/1000.0);
+    printf("Kernel time (ms): %0.2f\n", kernel_time);
+    printf("H2D time (ms): %0.2f\n", h2d_time);
+    printf("D2H time (ms): %0.2f\n", d2h_time);
 
     return 0;
 }

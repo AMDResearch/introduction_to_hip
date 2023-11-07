@@ -75,9 +75,10 @@ int main(int argc, char *argv[]){
     size_t bytes = N * sizeof(double);
 
     /* Allocate host buffers */
-    double *h_A_in      = (double*)malloc(bytes);
-    double *h_A_out     = (double*)malloc(bytes);
-    double *h_A_out_cpu = (double*)malloc(bytes);
+    double *h_A_in, *h_A_out, *h_A_out_cpu;
+    gpuCheck( hipHostMalloc(&h_A_in, bytes) );
+    gpuCheck( hipHostMalloc(&h_A_out, bytes) );
+    gpuCheck( hipHostMalloc(&h_A_out_cpu, bytes) );
 
     /* Initialize CPU arrays */
     for (int i=0; i<N; i++){
@@ -96,17 +97,19 @@ int main(int argc, char *argv[]){
     int blk_in_grid = ceil( float(N) / THREADS_PER_BLOCK );
 
     /* Copy arrays from host to device */
-    gpuCheck( hipMemcpy(d_A_in, h_A_in, bytes, hipMemcpyHostToDevice) );
-    gpuCheck( hipMemcpy(d_A_out, h_A_out, bytes, hipMemcpyHostToDevice) );
+    gpuCheck( hipMemcpyAsync(d_A_in, h_A_in, bytes, hipMemcpyHostToDevice, NULL) );
+    gpuCheck( hipMemcpyAsync(d_A_out, h_A_out, bytes, hipMemcpyHostToDevice, NULL) );
 
     /* Launch stencil kernel */
     stencil<<<blk_in_grid, THREADS_PER_BLOCK>>>(d_A_in, d_A_out);
 
     /* Copy out-array from device to host */
-    gpuCheck( hipMemcpy(h_A_out, d_A_out, bytes, hipMemcpyDeviceToHost) );
+    gpuCheck( hipMemcpyAsync(h_A_out, d_A_out, bytes, hipMemcpyDeviceToHost, NULL) );
 
     /* Run CPU-version of stencil */
     cpu_stencil(h_A_in, h_A_out_cpu);
+
+    gpuCheck( hipDeviceSynchronize() );
 
     /* Check results */
     double tolerance   = 1.0e-14;
@@ -119,9 +122,9 @@ int main(int argc, char *argv[]){
     }
 
     /* Free host memory */
-    free(h_A_in);
-    free(h_A_out);
-    free(h_A_out_cpu);
+    gpuCheck( hipHostFree(h_A_in) );
+    gpuCheck( hipHostFree(h_A_out) );
+    gpuCheck( hipHostFree(h_A_out_cpu) );
 
     /* Free device memory */
     gpuCheck( hipFree(d_A_in) );

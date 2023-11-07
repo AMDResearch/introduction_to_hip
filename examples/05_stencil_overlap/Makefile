@@ -6,10 +6,10 @@ HIPFLAGS = --offload-arch=gfx908
 # ------------------------------
 
 stencil: stencil.o
-	${HIPCC} stencil.o -o stencil
+	${HIPCC} ${HIPFLAGS} stencil.o -o stencil
 
 stencil.o: stencil.cpp
-	${HIPCC} -c stencil.cpp
+	${HIPCC} ${HIPFLAGS} -c stencil.cpp
 
 .PHONY: clean
 
