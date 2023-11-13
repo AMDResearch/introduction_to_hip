@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
     gpuCheck( hipMalloc(&d_C, bytes) );
 
     /* Copy data from host arrays to device arrays */
-    gpuCheck( hipMemcpy(d_A, h_A, bytes, hipMemcpyHostToDevice) );
+    gpuCheck( hipMemcpy(h_A, h_A, bytes, hipMemcpyHostToDevice) );
     gpuCheck( hipMemcpy(d_B, h_B, bytes, hipMemcpyHostToDevice) );
     gpuCheck( hipMemcpy(d_C, h_C, bytes, hipMemcpyHostToDevice) );
 
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
     int blk_in_grid = ceil( float(N) / thr_per_blk );
 
     /* Launch vector addition kernel */
-    vector_addition<<<blk_in_grid, 0>>>(d_A, d_B, d_C, N);
+    vector_addition<<<blk_in_grid, thr_per_blk>>>(d_A, d_B, d_C, N);
 
     /* Check for kernel launch errors */
     gpuCheck( hipGetLastError() );
