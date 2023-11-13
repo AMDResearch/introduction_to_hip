@@ -19,12 +19,10 @@ __global__ void square_elements(int *A, int n)
 {
     int id = blockDim.x * blockIdx.x + threadIdx.x;
 
-    if (id < n) { 
 
-        // TODO: Complete the kernel by simply squaring
-        //       the array elements of A
+    // TODO: Complete the kernel by squaring
+    //       all elements of the array.
 
-    }
 }
 
 /* --------------------------------------------------
