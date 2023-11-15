@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#SBATCH -A staff
 #SBATCH -J 06_stencil_timers
 #SBATCH -N 1
 #SBATCH -t 5

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#SBATCH -A staff
 #SBATCH -J 11_vector_addition_header_file
 #SBATCH -N 1
 #SBATCH -t 5

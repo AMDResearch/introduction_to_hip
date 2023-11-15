@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#SBATCH -A staff
 #SBATCH -J 05_stencil_overlap
 #SBATCH -N 1
 #SBATCH -t 5
