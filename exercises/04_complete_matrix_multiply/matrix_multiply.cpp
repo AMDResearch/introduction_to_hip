@@ -37,7 +37,7 @@ __global__ void matrix_multiply(double *A, double *B, double *C, int n)
             element = element + A[??] * B[??]; 
         }
 
-        C[index] = element;
+        // TODO: Copy the result back to the C array here
     }
 }
 
@@ -106,8 +106,8 @@ int main(int argc, char *argv[]){
         for(int j=0; j<N; j++){
                 
             int index = N * i + j;
-            if( fabs(h_C[index] - N ) > tolerance ){
-                printf("Error: h_C[%d] = %0.14f instead of 1.00000000000000\n", index, h_C[index]);
+            if( isnan(h_C[index]) || fabs(h_C[index] - N ) > tolerance ){
+                printf("Error: h_C[%d] = %0.14f instead of %d\n", index, h_C[index], N);
                 exit(1);
             }
         }

@@ -13,5 +13,5 @@ To compile and run:
 ```
 $ make
 
-$ ./add_one
+$ sbatch submit.sh
 ```

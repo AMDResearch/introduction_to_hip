@@ -6,7 +6,7 @@ To compile and run:
 ```
 $ make
 
-$ ./vector_addition
+$ sbatch submit.sh
 ```
 
 

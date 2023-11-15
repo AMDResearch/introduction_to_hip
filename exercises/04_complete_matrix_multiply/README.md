@@ -8,5 +8,5 @@ To compile and run:
 ```
 $ make
 
-$ ./matrix_multiply
+$ sbatch submit.sh
 ```

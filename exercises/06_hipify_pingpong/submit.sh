@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH -J 01_error_check
+#SBATCH -J 06_hipify_pingpong 
 #SBATCH -N 1
 #SBATCH -t 5
 #SBATCH --reservation=sc23
 
-srun -N1 -n1 ./vector_addition
+srun -N1 -n1 ./pingpong
