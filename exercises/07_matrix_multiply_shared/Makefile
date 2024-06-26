@@ -1,7 +1,7 @@
 # ------------------------------
 
 HIPCC    = hipcc
-HIPFLAGS = --offload-arch=gfx908
+HIPFLAGS = --offload-arch=gfx90a
 
 # ------------------------------
 
