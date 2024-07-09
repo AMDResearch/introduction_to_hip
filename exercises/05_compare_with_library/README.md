@@ -13,7 +13,7 @@ $ sbatch submit.sh
 
 To view the resulting profile, run the python script:
 ```
-./parse_output.py
+python3 parse_output.py
 ```
 
 It should be clear from the performance difference that using existing libraries is typically the right choice instead of re-inventing the (slower) wheel.
