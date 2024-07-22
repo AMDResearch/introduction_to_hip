@@ -80,6 +80,9 @@ void host_device_transfer(const char* direction){
         gpuCheck( cudaEventSynchronize(stop) );
         gpuCheck( cudaEventElapsedTime(&milliseconds, start, stop) );
 
+        gpuCheck( cudaFreeHost(h_A) );
+        gpuCheck( cudaFree(d_A) );
+
         double bandwidth = ( 1000.0 * (double)loop_count * (double)bytes ) / ( (double)milliseconds * 1000.0 * 1000.0 * 1000.0);
         double bytes_mb  = (double)bytes / (1024.0 * 1024.0);
 
