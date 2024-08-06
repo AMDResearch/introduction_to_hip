@@ -26,8 +26,10 @@ __global__ void vector_addition(double *A, double *B, double *C)
     int id  = blockDim.x * blockIdx.x + threadIdx.x;
     int lid = threadIdx.x;
 
-    s_A[lid] = A[id];
-    s_B[lid] = B[id];
+    if (id < N){
+        s_A[lid] = A[id];
+        s_B[lid] = B[id];
+    }
 
     __syncthreads();
 

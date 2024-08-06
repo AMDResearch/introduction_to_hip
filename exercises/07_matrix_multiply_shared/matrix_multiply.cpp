@@ -31,28 +31,32 @@ __global__ void matrix_multiply(double *A, double *B, double *C, int n)
 
     int index  = n * row + col;
 
-    if (col < n && row < n){
+    int THREADS_PER_BLOCK = THREADS_PER_BLOCK_Y;
+    int num_chunks        = n / THREADS_PER_BLOCK;
 
-        int THREADS_PER_BLOCK = THREADS_PER_BLOCK_Y;
-        int num_chunks        = n / THREADS_PER_BLOCK;
+    double element = 0.0;
 
-        double element = 0.0;
+    for (int chunk=0; chunk<num_chunks; chunk++){
 
-        for (int chunk=0; chunk<num_chunks; chunk++){ 
+        if (col < n && row < n){
 
             // TODO: Read data from global GPU memory into shared memory
+        }
 
-            __syncthreads();
+        __syncthreads();
+
+        if (col < n && row < n){
 
             for (int i=0; i<THREADS_PER_BLOCK; i++){
                 element = element + s_A[lrow][i] * s_B[i][lcol];
             }
 
-            __syncthreads();
         }
 
-        C[index] = element;
+        __syncthreads();
     }
+
+    C[index] = element;
 }
 
 /* --------------------------------------------------
