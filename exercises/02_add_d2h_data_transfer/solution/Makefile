@@ -1,15 +1,16 @@
 # ------------------------------
 
 HIPCC    = hipcc
-HIPFLAGS = --offload-arch=gfx90a
+OFFLOAD_ARCH ?= gfx90a
+HIPFLAGS      = --offload-arch=$(OFFLOAD_ARCH)
 
 # ------------------------------
 
 add_one: add_one.o
-	${HIPCC} add_one.o -o add_one
+	$(HIPCC) $(HIPFLAGS) add_one.o -o add_one
 
 add_one.o: add_one.cpp
-	${HIPCC} -c add_one.cpp
+	$(HIPCC) $(HIPFLAGS) -c add_one.cpp
 
 .PHONY: clean
 

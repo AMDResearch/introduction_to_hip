@@ -1,15 +1,16 @@
 # ------------------------------
 
 HIPCC    = hipcc
-HIPFLAGS = --offload-arch=gfx90a
+OFFLOAD_ARCH ?= gfx90a
+HIPFLAGS      = --offload-arch=$(OFFLOAD_ARCH)
 
 # ------------------------------
 
 pingpong: pingpong.o
-	${HIPCC} pingpong.o -o pingpong
+	$(HIPCC) $(HIPFLAGS) pingpong.o -o pingpong
 
 pingpong.o: pingpong.cpp
-	${HIPCC} -c pingpong.cpp
+	$(HIPCC) $(HIPFLAGS) -c pingpong.cpp
 
 .PHONY: clean
 

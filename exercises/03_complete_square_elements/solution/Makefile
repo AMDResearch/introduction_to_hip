@@ -1,15 +1,16 @@
 # ------------------------------
 
 HIPCC    = hipcc
-HIPFLAGS = --offload-arch=gfx90a
+OFFLOAD_ARCH ?= gfx90a
+HIPFLAGS      = --offload-arch=$(OFFLOAD_ARCH)
 
 # ------------------------------
 
 square_elements: square_elements.o
-	${HIPCC} square_elements.o -o square_elements
+	$(HIPCC) $(HIPFLAGS) square_elements.o -o square_elements
 
 square_elements.o: square_elements.cpp
-	${HIPCC} -c square_elements.cpp
+	$(HIPCC) $(HIPFLAGS) -c square_elements.cpp
 
 .PHONY: clean
 

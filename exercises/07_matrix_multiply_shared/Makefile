@@ -1,15 +1,16 @@
 # ------------------------------
 
 HIPCC    = hipcc
-HIPFLAGS = --offload-arch=gfx90a
+OFFLOAD_ARCH ?= gfx90a
+HIPFLAGS      = --offload-arch=$(OFFLOAD_ARCH)
 
 # ------------------------------
 
 matrix_multiply: matrix_multiply.o
-	${HIPCC} matrix_multiply.o -o matrix_multiply
+	$(HIPCC) $(HIPFLAGS) matrix_multiply.o -o matrix_multiply
 
 matrix_multiply.o: matrix_multiply.cpp
-	${HIPCC} -c matrix_multiply.cpp
+	$(HIPCC) $(HIPFLAGS) -c matrix_multiply.cpp
 
 .PHONY: clean
 

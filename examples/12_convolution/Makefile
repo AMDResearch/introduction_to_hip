@@ -1,15 +1,16 @@
 # ------------------------------
 
 HIPCC    = hipcc
-HIPFLAGS = --offload-arch=gfx90a
+OFFLOAD_ARCH ?= gfx90a
+HIPFLAGS      = --offload-arch=$(OFFLOAD_ARCH)
 
 # ------------------------------
 
 convolution: convolution.o
-	${HIPCC} ${HIPFLAGS} convolution.o -o convolution
+	$(HIPCC) $(HIPFLAGS) convolution.o -o convolution
 
 convolution.o: convolution.cpp
-	${HIPCC} ${HIPFLAGS} -c convolution.cpp
+	$(HIPCC) $(HIPFLAGS) -c convolution.cpp
 
 .PHONY: clean
 
