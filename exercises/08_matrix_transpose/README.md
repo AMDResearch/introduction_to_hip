@@ -1,13 +1,17 @@
-# Add the device-to-host data transfer
+# Transpose the matrix
 
-This example simply initializes an array of integers to 0 on the host, sends the 0s from the host array to the device array, then adds 1 to each element in the kernel, then sends the 1s back to the host array.
+To transpose a matrix, you simply flip the matrix over its diagonal; i.e., swapping rows of the original matrix to columns of the transpose matrix:
 
-However, the device-to-host data transfer call (`hipMemcpy`) is missing. Please add in the missing call and run the program. Look for the TODO.
-
-This is the API call to use:
 ```
-hipError_t hipMemcpy(void *dst, void *src, size_t size_in_bytes, hipMemcpyKind kind)
+A  = | a b c |
+     | d e f |
+
+AT = | a d |
+     | b e |
+     | c f | 
 ```
+
+In this exercise, your task is to complete a HIP kernel that transposes a matrix (2D array). The rest of the program is complete aside from this task (look for the TODO).
 
 To compile and run:
 ```
