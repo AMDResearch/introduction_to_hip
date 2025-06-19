@@ -4,7 +4,7 @@
 #SBATCH -N 1
 #SBATCH -t 5
 #SBATCH -p mi100
-#SBATCH -p mi2104x
+#SBATCH -p mi2101x
 
 make
 
