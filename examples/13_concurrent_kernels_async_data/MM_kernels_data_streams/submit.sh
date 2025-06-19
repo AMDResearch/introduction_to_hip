@@ -3,7 +3,6 @@
 #SBATCH -J 13_MM_kernels_data_streams
 #SBATCH -N 1
 #SBATCH -t 5
-#SBATCH -p mi100
 #SBATCH -p mi2101x
 #SBATCH --reservation=cybercolombia
 
