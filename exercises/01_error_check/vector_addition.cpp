@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
     gpuCheck( hipMalloc(&d_C, bytes) );
 
     /* Copy data from host arrays to device arrays */
-    gpuCheck( hipMemcpy(h_A, h_A, bytes, hipMemcpyHostToDevice) );
+    gpuCheck( hipMemcpy(d_A, h_A, bytes, hipMemcpyHostToDevice) );
     gpuCheck( hipMemcpy(d_B, h_B, bytes, hipMemcpyHostToDevice) );
     gpuCheck( hipMemcpy(d_C, h_C, bytes, hipMemcpyHostToDevice) );
 
