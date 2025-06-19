@@ -5,6 +5,7 @@
 #SBATCH -t 5
 #SBATCH -p mi100
 #SBATCH -p mi2101x
+#SBATCH --reservation=cybercolombia
 
 make
 

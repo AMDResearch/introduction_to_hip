@@ -42,7 +42,7 @@ int main(int argc, char *argv[]){
 
     /* Initialize host arrays */
     for(int i=0; i<N; i++){
-        h_A[i] = i; 
+        h_A[i] = i % 10; 
     }    
 
     /* Allocate memory for device array */
@@ -73,8 +73,8 @@ int main(int argc, char *argv[]){
     /* Check for correct results */
     for (int i=0; i<N; i++){
 
-        if(h_A[i] != i * i){
-            printf("Error: h_A[%d] = %d instead of %d\n", i, h_A[i], i*i );
+        if(h_A[i] != (i % 10) * (i % 10)){
+            printf("Error: h_A[%d] = %d instead of %d\n", i, h_A[i], (i % 10) * (i % 10));
             exit(1);
         }
     }
