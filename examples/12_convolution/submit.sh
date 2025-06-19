@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -J 09_convolution
+#SBATCH -J 12_convolution
 #SBATCH -N 1
 #SBATCH -t 5
 #SBATCH -p mi2101x
