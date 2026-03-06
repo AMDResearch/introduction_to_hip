@@ -184,13 +184,13 @@ int main(int argc, char *argv[]){
     dim3 thr_per_blk( 16, 16, 1 );
     dim3 blk_in_grid( ceil( float(N) / thr_per_blk.x), ceil(float(N) / thr_per_blk.y), 1 );
 
-    /* Launch matrix addition kernel 1 */
+    /* Launch matrix multiply kernel 1 */
     matrix_multiply_1<<<blk_in_grid, thr_per_blk, 0, stream1>>>(d_A_1, d_B_1, d_C_1, N);
 
-    /* Launch matrix addition kernel 2 */
+    /* Launch matrix multiply kernel 2 */
     matrix_multiply_2<<<blk_in_grid, thr_per_blk, 0, stream2>>>(d_A_2, d_B_2, d_C_2, N);
 
-    /* Launch matrix addition kernel 3 */
+    /* Launch matrix multiply kernel 3 */
     matrix_multiply_3<<<blk_in_grid, thr_per_blk, 0, stream3>>>(d_A_3, d_B_3, d_C_3, N);
 
     /* Copy data from device matrix to host matrix 1 (only need result, d_C_1) */

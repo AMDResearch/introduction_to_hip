@@ -176,6 +176,14 @@ int main(int argc, char *argv[]){
     gpuCheck( hipFree(d_A_in) );
     gpuCheck( hipFree(d_A_out) );
 
+    /* Destroy events */
+    gpuCheck( hipEventDestroy(start_kernel) );
+    gpuCheck( hipEventDestroy(stop_kernel) );
+    gpuCheck( hipEventDestroy(start_h2d) );
+    gpuCheck( hipEventDestroy(stop_h2d) );
+    gpuCheck( hipEventDestroy(start_d2h) );
+    gpuCheck( hipEventDestroy(stop_d2h) );
+
     printf("__SUCCESS__\n");
     printf("Elapsed total time (ms): %0.2f\n", elapsed_total_time.tv_sec*1000.0+elapsed_total_time.tv_usec/1000.0);
     printf("Elapsed CPU time (ms): %0.2f\n", elapsed_cpu_time.tv_sec*1000.0+elapsed_cpu_time.tv_usec/1000.0);

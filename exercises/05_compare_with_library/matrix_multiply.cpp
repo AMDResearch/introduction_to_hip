@@ -117,7 +117,7 @@ int main(int argc, char *argv[]){
     dim3 thr_per_blk( 16, 16, 1 );
     dim3 blk_in_grid( ceil( float(N) / thr_per_blk.x), ceil(float(N) / thr_per_blk.y), 1 );
 
-    /* Launch matrix addition kernel */
+    /* Launch matrix multiply kernel */
     matrix_multiply<<<blk_in_grid, thr_per_blk>>>(d_A, d_B, d_C, N);
 
     /* Check for kernel launch errors */
@@ -136,7 +136,7 @@ int main(int argc, char *argv[]){
     const double beta = 0.0;
 
     hipblasHandle_t handle;
-    hipblasCreate(&handle);
+    gpuBlasCheck( hipblasCreate(&handle) );
 
     gpuBlasCheck( hipblasDgemm(handle, 
                                HIPBLAS_OP_T,
@@ -168,18 +168,20 @@ int main(int argc, char *argv[]){
                 
             int index = N * i + j;
 
-            if( fabs( ( (h_C[index] - N ) > tolerance )) ){
-                printf("Error: h_C[%d] = %0.14f instead of 1.00000000000000\n", index, h_C[index]);
+            if( fabs(h_C[index] - N) > tolerance ){
+                printf("Error: h_C[%d] = %0.14f instead of %d\n", index, h_C[index], N);
                 exit(1);
             }
 
-            if( fabs( ( (h_C_lib[index] - N ) > tolerance )) ){
-                printf("Error: h_C_lib[%d] = %0.14f instead of 1.00000000000000\n", index, h_C_lib[index]);
+            if( fabs(h_C_lib[index] - N) > tolerance ){
+                printf("Error: h_C_lib[%d] = %0.14f instead of %d\n", index, h_C_lib[index], N);
                 exit(1);
             }
 
         }
     }   
+
+    gpuBlasCheck( hipblasDestroy(handle) );
 
     /* Free CPU memory */
     free(h_A);

@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
     gpuCheck( hipMalloc(&d_B, bytes) );
     gpuCheck( hipMalloc(&d_C, bytes) );
 
-    /* Copy data from host matrices to device matricesL */
+    /* Copy data from host matrices to device matrices */
     gpuCheck( hipMemcpy(d_A, h_A, bytes, hipMemcpyHostToDevice) );
     gpuCheck( hipMemcpy(d_B, h_B, bytes, hipMemcpyHostToDevice) );
     gpuCheck( hipMemcpy(d_C, h_C, bytes, hipMemcpyHostToDevice) );
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]){
     dim3 thr_per_blk( 16, 16, 1 );
     dim3 blk_in_grid( ceil( float(N) / thr_per_blk.x), ceil(float(N) / thr_per_blk.y), 1 );
 
-    /* Launch matrix addition kernel */
+    /* Launch matrix multiply kernel */
     matrix_multiply<<<blk_in_grid, thr_per_blk>>>(d_A, d_B, d_C, N);
 
     /* Check for kernel launch errors */

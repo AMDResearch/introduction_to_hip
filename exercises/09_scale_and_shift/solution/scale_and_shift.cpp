@@ -61,7 +61,7 @@ int main(int argc, char *argv[]){
     int thr_per_blk = 256;
     int blk_in_grid = ceil( float(N) / thr_per_blk );
 
-    /* Launch vector addition kernel */
+    /* Launch scale and shift kernel */
     scale_and_shift<<<blk_in_grid, thr_per_blk>>>(d_input, d_output, scale, shift, N);
 
     /* Check for kernel launch errors */
@@ -70,16 +70,16 @@ int main(int argc, char *argv[]){
     /* Check for kernel execution errors */
     gpuCheck ( hipDeviceSynchronize() );
 
-    /* Copy data from device array to host array (only need result, d_C) */
+    /* Copy data from device array to host array (only need result, d_output) */
     gpuCheck( hipMemcpy(h_output, d_output, bytes, hipMemcpyDeviceToHost) );
 
     /* Check for correct results */
-    double sum       = 0.0;
     double tolerance = 1.0e-14;
 
     for(int i=0; i<N; i++){
-        if (h_output[i] - (scale * h_input[i] + shift) > tolerance) {
-            printf("Error: Sum/N = %0.2f instead of ~1.0\n", sum / N);
+        double expected = scale * h_input[i] + shift;
+        if (fabs(h_output[i] - expected) > tolerance) {
+            printf("Error: h_output[%d] = %0.14f instead of %0.14f\n", i, h_output[i], expected);
             exit(1);
         }
     }

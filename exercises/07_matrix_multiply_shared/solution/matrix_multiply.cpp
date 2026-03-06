@@ -56,7 +56,9 @@ __global__ void matrix_multiply(double *A, double *B, double *C, int n)
         __syncthreads();
     }
 
-    C[index] = element;
+    if (col < n && row < n){
+        C[index] = element;
+    }
 }
 
 /* --------------------------------------------------
@@ -92,7 +94,7 @@ int main(int argc, char *argv[]){
     gpuCheck( hipMalloc(&d_B, bytes) );
     gpuCheck( hipMalloc(&d_C, bytes) );
 
-    /* Copy data from host matrices to device matricesL */
+    /* Copy data from host matrices to device matrices */
     gpuCheck( hipMemcpy(d_A, h_A, bytes, hipMemcpyHostToDevice) );
     gpuCheck( hipMemcpy(d_B, h_B, bytes, hipMemcpyHostToDevice) );
     gpuCheck( hipMemcpy(d_C, h_C, bytes, hipMemcpyHostToDevice) );
@@ -105,7 +107,7 @@ int main(int argc, char *argv[]){
     dim3 thr_per_blk( THREADS_PER_BLOCK_X, THREADS_PER_BLOCK_Y, 1 );
     dim3 blk_in_grid( ceil( float(N) / thr_per_blk.x), ceil(float(N) / thr_per_blk.y), 1 );
 
-    /* Launch matrix addition kernel */
+    /* Launch matrix multiply kernel */
     matrix_multiply<<<blk_in_grid, thr_per_blk>>>(d_A, d_B, d_C, N);
 
     /* Check for kernel launch errors */
@@ -124,8 +126,8 @@ int main(int argc, char *argv[]){
         for(int j=0; j<N; j++){
                 
             int index = N * i + j;
-            if( fabs(h_C[index] - N ) > tolerance ){
-                printf("Error: h_C[%d] = %0.14f instead of 1.00000000000000\n", index, h_C[index]);
+            if( isnan(h_C[index]) || fabs(h_C[index] - N ) > tolerance ){
+                printf("Error: h_C[%d] = %0.14f instead of %d\n", index, h_C[index], N);
                 exit(1);
             }
         }

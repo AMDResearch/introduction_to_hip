@@ -101,7 +101,7 @@ int main(int argc, char *argv[]){
         }
     }
 
-    /* Initialize host intput matrix */
+    /* Initialize host input matrix */
     for(int i=0; i<N_input; i++){
         for(int j=0; j<N_input; j++){
 
@@ -143,7 +143,7 @@ int main(int argc, char *argv[]){
     dim3 thr_per_blk( 16, 16, 1 );
     dim3 blk_in_grid( ceil( float(N_input) / thr_per_blk.x), ceil(float(N_input) / thr_per_blk.y), 1 );
 
-    /* Launch matrix addition kernel */
+    /* Launch convolution kernel */
     gpu_convolution<<<blk_in_grid, thr_per_blk>>>(d_input, d_filter, d_output, N_input, N_filter, N_output, filter_radius);
 
     /* Check for kernel launch errors */
