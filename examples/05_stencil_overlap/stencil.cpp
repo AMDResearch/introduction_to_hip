@@ -122,9 +122,9 @@ int main(int argc, char *argv[]){
     }
 
     /* Free host memory */
-    gpuCheck( hipHostFree(h_A_in) );
-    gpuCheck( hipHostFree(h_A_out) );
-    gpuCheck( hipHostFree(h_A_out_cpu) );
+    gpuCheck( hipFreeHost(h_A_in) );
+    gpuCheck( hipFreeHost(h_A_out) );
+    gpuCheck( hipFreeHost(h_A_out_cpu) );
 
     /* Free device memory */
     gpuCheck( hipFree(d_A_in) );

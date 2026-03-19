@@ -232,19 +232,19 @@ int main(int argc, char *argv[]){
     }   
 
     /* Free CPU memory 1 */
-    gpuCheck( hipHostFree(h_A_1) );
-    gpuCheck( hipHostFree(h_B_1) );
-    gpuCheck( hipHostFree(h_C_1) );
+    gpuCheck( hipFreeHost(h_A_1) );
+    gpuCheck( hipFreeHost(h_B_1) );
+    gpuCheck( hipFreeHost(h_C_1) );
 
     /* Free CPU memory 2 */
-    gpuCheck( hipHostFree(h_A_2) );
-    gpuCheck( hipHostFree(h_B_2) );
-    gpuCheck( hipHostFree(h_C_2) );
+    gpuCheck( hipFreeHost(h_A_2) );
+    gpuCheck( hipFreeHost(h_B_2) );
+    gpuCheck( hipFreeHost(h_C_2) );
 
     /* Free CPU memory 3 */
-    gpuCheck( hipHostFree(h_A_3) );
-    gpuCheck( hipHostFree(h_B_3) );
-    gpuCheck( hipHostFree(h_C_3) );
+    gpuCheck( hipFreeHost(h_A_3) );
+    gpuCheck( hipFreeHost(h_B_3) );
+    gpuCheck( hipFreeHost(h_C_3) );
 
     /* Free Device memory 1 */
     gpuCheck( hipFree(d_A_1) );
