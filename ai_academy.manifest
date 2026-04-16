@@ -1,0 +1,24 @@
+# ai_academy.manifest
+# List source directories (relative to repo root) to include in ai_academy/.
+# One entry per line. Blank lines and lines starting with # are ignored.
+
+# Demos
+examples/01_vector_addition
+examples/02_vector_addition_error_check
+examples/03_vector_addition_timers
+examples/08_matrix_addition
+examples/09_vector_addition_shared
+examples/10_vector_addition_hipify
+examples/11_vector_addition_header_file
+examples/13_concurrent_kernels_async_data
+
+# Hands-on
+exercises/01_error_check
+exercises/02_add_d2h_data_transfer
+exercises/03_complete_square_elements
+exercises/04_complete_matrix_multiply
+exercises/05_compare_with_library
+exercises/06_hipify_pingpong
+exercises/07_matrix_multiply_shared
+exercises/08_matrix_transpose
+exercises/09_scale_and_shift
